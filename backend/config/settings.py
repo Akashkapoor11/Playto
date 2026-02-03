@@ -16,6 +16,10 @@ DEBUG = os.environ.get("DJANGO_DEBUG", "True").lower() in ("1", "true", "yes")
 # Allow local addresses and any host during development; lock this down for production
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
+# Add Render domain support
+if "RENDER" in os.environ:
+    ALLOWED_HOSTS.append(os.environ.get("RENDER_EXTERNAL_HOSTNAME", ""))
+
 # =========================
 # APPLICATIONS
 # =========================
@@ -87,14 +91,24 @@ TEMPLATES = [
 ]
 
 # =========================
-# DATABASE (sqlite for dev)
+# DATABASE (sqlite for dev, postgres for production)
 # =========================
+import dj_database_url
+
+# Default to SQLite for local development
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+
+# Override with PostgreSQL if DATABASE_URL is set (production on Render)
+if "DATABASE_URL" in os.environ:
+    DATABASES["default"] = dj_database_url.config(
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
 
 # =========================
 # AUTH / I18N
@@ -141,21 +155,27 @@ REST_FRAMEWORK = {
 # CORS (frontend connect)
 # =========================
 # For local dev you can allow all origins.
-# If you'd prefer to lock it down, set CORS_ALLOWED_ORIGINS instead.
+# For production, we'll use a whitelist approach for security.
 CORS_ALLOW_ALL_ORIGINS = os.environ.get("CORS_ALLOW_ALL_ORIGINS", "True").lower() in (
     "1",
     "true",
     "yes",
 )
 
-# If you prefer to whitelist only the dev frontend hosts, use this instead:
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:3000",
-#     "http://127.0.0.1:3000",
-#     "http://localhost:3001",
-# ]
-#
-# (If CORS_ALLOW_ALL_ORIGINS is True, Django will ignore CORS_ALLOWED_ORIGINS.)
+# Whitelist for production
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:3001",
+    "http://127.0.0.1:3001",
+]
+
+# Add production frontend URL from environment
+frontend_url = os.environ.get("FRONTEND_URL", "")
+if frontend_url:
+    CORS_ALLOWED_ORIGINS.append(frontend_url)
+    # Disable allow all origins in production
+    CORS_ALLOW_ALL_ORIGINS = False
 
 # For Django >= 4.x you may need to add CSRF trusted origins for cross-origin POSTs from your frontend:
 CSRF_TRUSTED_ORIGINS = [
@@ -164,6 +184,15 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3001",
     "http://127.0.0.1:3001",
 ]
+
+# Add production URLs to CSRF trusted origins
+if frontend_url:
+    CSRF_TRUSTED_ORIGINS.append(frontend_url)
+
+# Add Render backend URL to CSRF trusted origins
+if "RENDER_EXTERNAL_HOSTNAME" in os.environ:
+    render_url = f"https://{os.environ['RENDER_EXTERNAL_HOSTNAME']}"
+    CSRF_TRUSTED_ORIGINS.append(render_url)
 
 # =========================
 # Optional security / session settings for local dev

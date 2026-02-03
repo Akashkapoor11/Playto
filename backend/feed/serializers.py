@@ -33,7 +33,7 @@ class PostSerializer(serializers.ModelSerializer):
     comments = serializers.SerializerMethodField()
 
     likes = serializers.IntegerField(
-        source="likes_count",  # ✅ MAP FIX
+        source="likes_count",
         read_only=True
     )
 

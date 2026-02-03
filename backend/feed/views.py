@@ -16,7 +16,7 @@ class FeedView(APIView):
     def get(self, request):
         posts = (
             Post.objects
-            .annotate(likes_count=Count("likes"))  # ✅ FIXED
+            .annotate(likes_count=Count("likes"))
             .select_related("author")
             .order_by("-created_at")
         )
@@ -63,9 +63,20 @@ class CreatePostView(APIView):
 
 
 class CreateCommentView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
     def post(self, request, post_id):
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+        
+        if request.user.is_authenticated:
+            user = request.user
+        else:
+            user, _ = User.objects.get_or_create(
+                username='demo_user',
+                defaults={'email': 'demo@example.com'}
+            )
+        
         content = request.data.get("content", "").strip()
         parent_id = request.data.get("parent_id")
 
@@ -95,7 +106,7 @@ class CreateCommentView(APIView):
 
         comment = Comment.objects.create(
             post=post,
-            author=request.user,
+            author=user,
             parent=parent,
             content=content
         )
@@ -107,13 +118,24 @@ class CreateCommentView(APIView):
 
 
 class LikePostView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
     def post(self, request, post_id):
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+        
+        if request.user.is_authenticated:
+            user = request.user
+        else:
+            user, _ = User.objects.get_or_create(
+                username='demo_user',
+                defaults={'email': 'demo@example.com'}
+            )
+        
         try:
             with transaction.atomic():
                 Like.objects.create(
-                    user=request.user,
+                    user=user,
                     post_id=post_id
                 )
             return Response({"liked": True})
@@ -125,13 +147,24 @@ class LikePostView(APIView):
 
 
 class LikeCommentView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
     def post(self, request, comment_id):
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+        
+        if request.user.is_authenticated:
+            user = request.user
+        else:
+            user, _ = User.objects.get_or_create(
+                username='demo_user',
+                defaults={'email': 'demo@example.com'}
+            )
+        
         try:
             with transaction.atomic():
                 Like.objects.create(
-                    user=request.user,
+                    user=user,
                     comment_id=comment_id
                 )
             return Response({"liked": True})

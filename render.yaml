@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: playto-backend
+    runtime: python
+    rootDirectory: backend
+    buildCommand: "bash build.sh"
+    startCommand: "gunicorn config.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: DATABASE_URL
+        fromDatabase:
+          name: playto-db
+          property: connectionString
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_DEBUG
+        value: False
+      - key: FRONTEND_URL
+        sync: false
+      - key: RENDER
+        value: true
+
+databases:
+  - name: playto-db
+    databaseName: playto
+    user: playto
