@@ -160,10 +160,10 @@ LIMIT 5;
 ```
 
 **Why this approach?**
-- ✅ Always accurate (no stale data)
-- ✅ Handles time windows correctly
-- ✅ No race conditions on karma updates
-- ✅ Single query for the entire leaderboard
+- Always accurate (no stale data)
+- Handles time windows correctly
+- No race conditions on karma updates
+- Single query for the entire leaderboard
 
 ---
 
@@ -176,7 +176,7 @@ LIMIT 5;
 The AI (ChatGPT/Cursor) suggested adding a `daily_karma` field to the User model:
 
 ```python
-# ❌ AI's WRONG suggestion
+# AI's WRONG suggestion
 class User(AbstractUser):
     daily_karma = models.IntegerField(default=0)
     last_karma_reset = models.DateTimeField(auto_now_add=True)
@@ -185,7 +185,7 @@ class User(AbstractUser):
 And updating it on every like:
 
 ```python
-# ❌ AI's WRONG approach
+# AI's WRONG approach
 def like_post(request, post_id):
     like = Like.objects.create(user=request.user, post_id=post_id)
     post.author.daily_karma += 5  # Update karma
@@ -215,7 +215,7 @@ def like_post(request, post_id):
 Instead of storing derived state, I **calculate karma dynamically** from the source of truth (the `Like` table):
 
 ```python
-# ✅ CORRECT approach
+# CORRECT approach
 def get_leaderboard(request):
     last_24h = now() - timedelta(hours=24)
     
@@ -233,10 +233,10 @@ def get_leaderboard(request):
 ```
 
 **Benefits:**
-- ✅ **No race conditions:** We're just reading data, not updating it
-- ✅ **Precise time windows:** `created_at >= last_24h` is exact
-- ✅ **Always correct:** Karma is calculated from the immutable event log
-- ✅ **Flexible:** Change the time window to any value without schema changes
+- **No race conditions:** We're just reading data, not updating it
+- **Precise time windows:** `created_at >= last_24h` is exact
+- **Always correct:** Karma is calculated from the immutable event log
+- **Flexible:** Change the time window to any value without schema changes
 
 ### Lesson Learned
 
