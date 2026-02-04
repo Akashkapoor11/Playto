@@ -2,7 +2,7 @@
 
 A full-stack community feed application with threaded discussions and a dynamic leaderboard, built for the Playto Engineering Challenge.
 
-## 🚀 Features
+##  Features
 
 - **Threaded Comments**: Reddit-style nested comment threads with unlimited depth
 - **Gamification System**: 
@@ -12,7 +12,7 @@ A full-stack community feed application with threaded discussions and a dynamic 
 - **Race Condition Protection**: Database-level constraints prevent double-likes
 - **Efficient Queries**: Optimized to avoid N+1 query problems
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 **Backend:**
 - Django 4.2 + Django REST Framework
@@ -24,7 +24,7 @@ A full-stack community feed application with threaded discussions and a dynamic 
 - Tailwind CSS
 - Create React App
 
-## 📦 Local Development Setup
+##  Local Development Setup
 
 ### Backend
 
@@ -87,7 +87,7 @@ cd backend
 python manage.py test
 ```
 
-## 🌐 Production Deployment
+##  Production Deployment
 
 ### Backend Deployment (Render)
 
@@ -141,7 +141,7 @@ python manage.py test
    - Update the `FRONTEND_URL` environment variable in Render
    - Redeploy the backend
 
-## 📚 API Endpoints
+##  API Endpoints
 
 | Method | Endpoint | Description | Auth Required |
 |--------|----------|-------------|---------------|
@@ -152,7 +152,7 @@ python manage.py test
 | POST | `/api/posts/<id>/comments/` | Add comment to post | Yes |
 | POST | `/api/comments/<id>/like/` | Like a comment | Yes |
 
-## 🏗️ Architecture Highlights
+##  Architecture Highlights
 
 ### Nested Comments (The Tree)
 - Uses **adjacency list** model with `parent` foreign key
@@ -171,13 +171,9 @@ python manage.py test
 - Atomic transactions for like operations
 - `IntegrityError` handling prevents double-likes
 
-## 📝 Notes
+##  Notes
 
 - **Session Authentication**: To test Like endpoints locally, log into Django admin (`/admin/`) in the same browser
 - **CORS**: Backend allows cross-origin requests from the frontend URL
 - **Static Files**: Served via WhiteNoise in production
-
-## 📄 License
-
-This project was created for the Playto Engineering Challenge.
 
