@@ -24,6 +24,10 @@ A full-stack community feed application with threaded discussions and a dynamic 
 - Tailwind CSS
 - Create React App
 
+## Deployment Link
+https://playto-seven.vercel.app/
+https://playto-5.onrender.com/admin
+
 ##  Local Development Setup
 
 ### Backend
