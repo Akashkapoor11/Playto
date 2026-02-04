@@ -12,7 +12,7 @@ A full-stack community feed application with threaded discussions and a dynamic 
 - **Race Condition Protection**: Database-level constraints prevent double-likes
 - **Efficient Queries**: Optimized to avoid N+1 query problems
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 **Backend:**
 - Django 4.2 + Django REST Framework
