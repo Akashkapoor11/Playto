@@ -25,8 +25,8 @@ A full-stack community feed application with threaded discussions and a dynamic 
 - Create React App
 
 ## Deployment Link
-https://playto-seven.vercel.app/
-https://playto-5.onrender.com/admin
+-Frontend= https://playto-seven.vercel.app/
+-Backend= https://playto-5.onrender.com/admin
 
 ##  Local Development Setup
 
